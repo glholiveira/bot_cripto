@@ -1,0 +1,41 @@
+# Arquivo .gitignore
+
+# Arquivos Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.env
+*.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Configurações do sistema operacional
+.DS_Store
+Thumbs.db
+
+# Configurações de IDEs
+.idea/
+.vscode/
+*.sublime-workspace
+
+# Logs
+*.log
+
+# Arquivos de chave e credenciais
+key.py
+.env
+
+# Dados temporários e de cache
+*.csv
+*.json
+*.sqlite3
+*.db
+.cache/
+__pycache__/
+
+# Excluir estado do bot salvo
+estado_bot.json
