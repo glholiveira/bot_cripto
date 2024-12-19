@@ -42,11 +42,15 @@ def carregar_estado():
             'ADAUSDT': {'compra': False, 'quantidade': 0, 'preco_compra': 0, 'comprou_extra': False, 'quantidade_extra': 0, 'preco_compra_extra': 0},  # Adicionando ADAUSDT
             'AVAXUSDT': {'compra': False, 'quantidade': 0, 'preco_compra': 0, 'comprou_extra': False, 'quantidade_extra': 0, 'preco_compra_extra': 0},  # Adicionando AVAXUSDT
             'XRPUSDT': {'compra': False, 'quantidade': 0, 'preco_compra': 0, 'comprou_extra': False, 'quantidade_extra': 0, 'preco_compra_extra': 0},  # Adicionando AVAXUSDT
-            'SHIBUSDT': {'compra': False, 'quantidade': 0, 'preco_compra': 0, 'comprou_extra': False, 'quantidade_extra': 0, 'preco_compra_extra': 0},  # Adicionando SHIBUSDT
-            # 'MATICUSDT': {'compra': False, 'quantidade': 0, 'preco_compra': 0, 'comprou_extra': False, 'quantidade_extra': 0, 'preco_compra_extra': 0},  # Adicionando MATICUSDT
             'APTUSDT': {'compra': False, 'quantidade': 0, 'preco_compra': 0, 'comprou_extra': False, 'quantidade_extra': 0, 'preco_compra_extra': 0},  # Adicionando APTUSDT
-            'PEPEUSDT': {'compra': False, 'quantidade': 0, 'preco_compra': 0, 'comprou_extra': False, 'quantidade_extra': 0, 'preco_compra_extra': 0},  # Adicionando PEPEUSDT
             'ARBUSDT': {'compra': False, 'quantidade': 0, 'preco_compra': 0, 'comprou_extra': False, 'quantidade_extra': 0, 'preco_compra_extra': 0},  # Adicionando ARBUSDT
+            'MOVEUSDT': {'compra': False, 'quantidade': 0, 'preco_compra': 0, 'comprou_extra': False, 'quantidade_extra': 0, 'preco_compra_extra': 0},  # Adicionando MOVE
+            'USUALUSDT': {'compra': False, 'quantidade': 0, 'preco_compra': 0, 'comprou_extra': False, 'quantidade_extra': 0, 'preco_compra_extra': 0},  # Adicionando USUAL
+            'HIVEUSDT': {'compra': False, 'quantidade': 0, 'preco_compra': 0, 'comprou_extra': False, 'quantidade_extra': 0, 'preco_compra_extra': 0},  # Adicionando HIVE
+            'MATICUSDT': {'compra': False, 'quantidade': 0, 'preco_compra': 0, 'comprou_extra': False, 'quantidade_extra': 0, 'preco_compra_extra': 0},
+            'ATOMUSDT': {'compra': False, 'quantidade': 0, 'preco_compra': 0, 'comprou_extra': False, 'quantidade_extra': 0, 'preco_compra_extra': 0},
+            'FTMUSDT': {'compra': False, 'quantidade': 0, 'preco_compra': 0, 'comprou_extra': False, 'quantidade_extra': 0, 'preco_compra_extra': 0},
+            'SANDUSDT': {'compra': False, 'quantidade': 0, 'preco_compra': 0, 'comprou_extra': False, 'quantidade_extra': 0, 'preco_compra_extra': 0},
 
         },
         'lucro_acumulado': 0.0
@@ -184,7 +188,7 @@ while True:
         df = atualizar_dados(symbol)
         if df is None:
             print("aqui")
-            time.sleep(60)
+            time.sleep(5)
             continue
 
         preco_atual = df['Close'].iloc[-1]
@@ -200,83 +204,31 @@ while True:
         if not compras[symbol]['compra']:
             # Primeira compra
             if df['rsi'].iloc[-1] < 30 and preco_atual < df['sma_20'].iloc[-1]:
-                if symbol in ['SHIBUSDT', 'PEPEUSDT']:
-                    # Calcule a quantidade mínima com base no notional e no preço atual
-                    preco_compra = min_notional / preco_atual
-
-                    # Ajuste a quantidade ao step_size permitido
-                    preco_compra = round_down(preco_compra, step_size)
-                    # Ajuste a quantidade antes de enviar a ordem
-                    preco_compra = ajustar_quantidade(preco_compra, step_size)
-
-                    # Verifique se a quantidade ajustada atende ao mínimo permitido (min_qty)
-                    if preco_compra >= min_qty:
-                        adjusted_time = int(time.time() * 1000) + time_diff
-                        if executar_ordem(symbol, 'BUY', preco_compra, adjusted_time):
-                            compras[symbol]['quantidade_extra'] = preco_compra
-                            compras[symbol]['preco_compra_extra'] = preco_atual
-                            compras[symbol]['comprou_extra'] = True
-                            
-                            # Salva o estado imediatamente após a compra extra
-                            estado_bot['compras'] = compras
-                            salvar_estado(estado_bot)
-                        else:
-                            print(f"Erro ao executar a ordem de compra para {symbol}.")
-                    else:
-                        # Informe que a quantidade não atende ao mínimo permitido
-                        print(f"Quantidade ajustada {preco_compra} abaixo do mínimo permitido ({min_qty}) para {symbol}. Ordem não executada.")
-                else:
-                    if preco_compra >= min_qty:
-                        adjusted_time = int(time.time() * 1000) + time_diff
-                        if executar_ordem(symbol, 'BUY', preco_compra, adjusted_time):
-                            compras[symbol]['compra'] = True
-                            compras[symbol]['quantidade'] = preco_compra
-                            compras[symbol]['preco_compra'] = preco_atual
-                            compras[symbol]['comprou_extra'] = False
-                            compras[symbol]['quantidade_extra'] = 0  # Zera quantidade extra caso tenha sido vendido
-                            
-                            # Salva o estado imediatamente após a compra extra
-                            estado_bot['compras'] = compras
-                            salvar_estado(estado_bot)
+                if preco_compra >= min_qty:
+                    adjusted_time = int(time.time() * 1000) + time_diff
+                    if executar_ordem(symbol, 'BUY', preco_compra, adjusted_time):
+                        compras[symbol]['compra'] = True
+                        compras[symbol]['quantidade'] = preco_compra
+                        compras[symbol]['preco_compra'] = preco_atual
+                        compras[symbol]['comprou_extra'] = False
+                        compras[symbol]['quantidade_extra'] = 0  # Zera quantidade extra caso tenha sido vendido
+                        
+                        # Salva o estado imediatamente após a compra extra
+                        estado_bot['compras'] = compras
+                        salvar_estado(estado_bot)
         else:
             # Compra extra
             if not compras[symbol]['comprou_extra'] and df['rsi'].iloc[-1] < 30 and preco_atual < df['sma_20'].iloc[-1]:
-                if symbol in ['SHIBUSDT', 'PEPEUSDT']:
-                    # Calcule a quantidade mínima com base no notional e no preço atual
-                    preco_compra = min_notional / preco_atual
-
-                    # Ajuste a quantidade ao step_size permitido
-                    preco_compra = round_down(preco_compra, step_size)
-                    # Ajuste a quantidade antes de enviar a ordem
-                    preco_compra = ajustar_quantidade(preco_compra, step_size)
-
-                    # Verifique se a quantidade ajustada atende ao mínimo permitido (min_qty)
-                    if preco_compra >= min_qty:
-                        adjusted_time = int(time.time() * 1000) + time_diff
-                        if executar_ordem(symbol, 'BUY', preco_compra, adjusted_time):
-                            compras[symbol]['quantidade_extra'] = preco_compra
-                            compras[symbol]['preco_compra_extra'] = preco_atual
-                            compras[symbol]['comprou_extra'] = True
-                            
-                            # Salva o estado imediatamente após a compra extra
-                            estado_bot['compras'] = compras
-                            salvar_estado(estado_bot)
-                        else:
-                            print(f"Erro ao executar a ordem de compra para {symbol}.")
-                    else:
-                        # Informe que a quantidade não atende ao mínimo permitido
-                        print(f"Quantidade ajustada {preco_compra} abaixo do mínimo permitido ({min_qty}) para {symbol}. Ordem não executada.")
-                else:
-                    if preco_compra >= min_qty:
-                        adjusted_time = int(time.time() * 1000) + time_diff
-                        if executar_ordem(symbol, 'BUY', preco_compra, adjusted_time):
-                            compras[symbol]['quantidade_extra'] = preco_compra
-                            compras[symbol]['preco_compra_extra'] = preco_atual
-                            compras[symbol]['comprou_extra'] = True
-                            
-                            # Salva o estado imediatamente após a compra extra
-                            estado_bot['compras'] = compras
-                            salvar_estado(estado_bot)
+                if preco_compra >= min_qty:
+                    adjusted_time = int(time.time() * 1000) + time_diff
+                    if executar_ordem(symbol, 'BUY', preco_compra, adjusted_time):
+                        compras[symbol]['quantidade_extra'] = preco_compra
+                        compras[symbol]['preco_compra_extra'] = preco_atual
+                        compras[symbol]['comprou_extra'] = True
+                        
+                        # Salva o estado imediatamente após a compra extra
+                        estado_bot['compras'] = compras
+                        salvar_estado(estado_bot)
 
             # Venda da compra principal
             preco_venda = (1 - taxa_transacao) * preco_atual
