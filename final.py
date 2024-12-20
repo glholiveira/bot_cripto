@@ -244,7 +244,7 @@ while True:
 
             # Venda da compra extra
             if compras[symbol]['quantidade_extra'] > 0:
-                preco_min_venda_extra = compras[symbol]['preco_compra_extra'] * (1 + taxa_transacao + 0.003)
+                preco_min_venda_extra = compras[symbol]['preco_compra_extra'] * (1 + taxa_transacao + 0.007)
                 print(f"Preço mínimo para venda da compra extra para {symbol}: {preco_min_venda_extra:.2f} USDT")
                 if preco_venda > preco_min_venda_extra:
                     adjusted_time = int(time.time() * 1000) + time_diff
